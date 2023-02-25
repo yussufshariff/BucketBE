@@ -1,5 +1,0 @@
-use('Bookit_Bucket');
-// db.user.renameCollection("users");
-db.Locations.renameCollection("locations");
-db.Comments.renameCollection("comments");
-
