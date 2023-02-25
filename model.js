@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
-const assert = require("assert");
-const { userInfo } = require("os");
-const { url } = require("./url");
+
+require("dotenv").config();
 
 mongoose
-  .connect(url, {
+  .connect(process.env.MONGODB_MAIN, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     dbName: "Bookit_Bucket",
