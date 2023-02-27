@@ -26,7 +26,7 @@ const locationsSchema = new mongoose.Schema(
 
 const usersSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
+    username: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
     profile_picture: {
@@ -85,7 +85,7 @@ exports.newUsers = async (input) => {
   console.log(input);
   const user = new users(input);
   if (
-    input.name == "undefined" ||
+    input.username == "undefined" ||
     input.email == "undefined" ||
     input.password == "undefined"
   ) {
@@ -94,7 +94,7 @@ exports.newUsers = async (input) => {
   return users.find().then(async function (users) {
     let exists = false;
     for (let i = 0; i < users.length; i++) {
-      if (users[i].name === user.name) {
+      if (users[i].username === user.username) {
         exists = true;
       }
     }
@@ -115,7 +115,7 @@ exports.newUsers = async (input) => {
 exports.newComments = async (input) => {
   const user = await users.findOne({ _id: input.userId });
   const comment = new comments(input);
-  comment.owner = user.name;
+  comment.owner = user.username;
   return comment.save((error, comment) => {
     if (error) {
       console.error(error);
@@ -164,7 +164,7 @@ exports.fetchSpecificLocation = async (location) => {
 
 exports.fetchSpecificUser = async (user) => {
   return await users
-    .findOne({ name: user }, function (err, user) {
+    .findOne({ username: user }, function (err, user) {
       if (user === null) {
         return "User not found";
       } else {
@@ -178,7 +178,7 @@ exports.fetchSpecificUser = async (user) => {
 };
 
 exports.fetchSpecificUserList = async (user) => {
-  return await users.findOne({ name: user }).then(function (userFound) {
+  return await users.findOne({ username: user }).then(function (userFound) {
     let userList = userFound.bucket_list;
     try {
       if (userList.length > 0) {
@@ -192,7 +192,7 @@ exports.fetchSpecificUserList = async (user) => {
 
 exports.addALocationToBucketList = async (user, locationToAdd) => {
   console.log(locationToAdd, "<--- Location to add");
-  return await users.findOne({ name: user }).then(function (userFound) {
+  return await users.findOne({ username: user }).then(function (userFound) {
     const specificUserFound = userFound;
     try {
       return locations
@@ -209,7 +209,7 @@ exports.addALocationToBucketList = async (user, locationToAdd) => {
               }
               if (!exists) {
                 await users.findOneAndUpdate(
-                  { name: specificUserFound.name },
+                  { username: specificUserFound.username },
                   { $push: { bucket_list: location } },
                   {
                     new: true,
@@ -232,7 +232,7 @@ exports.addALocationToBucketList = async (user, locationToAdd) => {
 
 exports.deleteSpecificUser = async (user) => {
   return await users
-    .deleteOne({ name: user })
+    .deleteOne({ username: user })
     .then(function () {
       return "User deleted";
     })
@@ -251,25 +251,27 @@ exports.deleteSpecificLocation = async (location) => {
 };
 
 exports.deleteSpecificLocationFromList = async (user, location) => {
-  return await users.findOne({ name: user }).then(async function (userFound) {
-    if (userFound === null) {
-      return "user not found";
-    } else {
-      let newList = [...userFound.bucket_list];
-      console.log(newList);
-      console.log(location);
-      for (let i = 0; i < newList.length; i++) {
-        if (newList[i].name === location) {
-          newList.splice(i, 1);
-          console.log(newList);
+  return await users
+    .findOne({ username: user })
+    .then(async function (userFound) {
+      if (userFound === null) {
+        return "user not found";
+      } else {
+        let newList = [...userFound.bucket_list];
+        console.log(newList);
+        console.log(location);
+        for (let i = 0; i < newList.length; i++) {
+          if (newList[i].name === location) {
+            newList.splice(i, 1);
+            console.log(newList);
+          }
         }
+        return await users.findOneAndUpdate(
+          { username: user },
+          { bucket_list: newList }
+        );
       }
-      return await users.findOneAndUpdate(
-        { name: user },
-        { bucket_list: newList }
-      );
-    }
-  });
+    });
 };
 
 exports.updateCommentVotes = async (commentId, user) => {
@@ -292,7 +294,7 @@ exports.updateCommentVotes = async (commentId, user) => {
 
 exports.updateProfilePicture = async (user, profilepicture) => {
   return users.findOneAndUpdate(
-    { name: user },
+    { username: user },
     { profile_picture: profilepicture }
   );
 };
