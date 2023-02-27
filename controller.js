@@ -1,3 +1,4 @@
+const { response } = require('express');
 const {
   newLocations,
   newUsers,
@@ -70,7 +71,8 @@ exports.getComments = (req, res, next) => {
   const { locations } = req.params;
   fetchComments(locations)
     .then((comments) => {
-      if (comments === undefined) {
+      console.log(comments);
+      if (comments[0] === undefined) {
         res.status(404).send({
           comments:
             "There are currently no comments for this location. Be the first to leave your story!!",
@@ -85,22 +87,40 @@ exports.getComments = (req, res, next) => {
 exports.getSpecificLocation = (req, res, next) => {
   const { locations } = req.params;
   fetchSpecificLocation(locations).then((location) => {
-    res.status(200).send({ location: location });
+    if (location[0] === undefined) {
+      res
+        .status(404)
+        .send({
+          location:
+            'This location does not exist in our database. Why not add it as a new location and be the first to comment?',
+        });
+    } else {
+      res.status(200).send({ location: location });
+    }
   });
 };
 
 exports.getUser = (req, res, next) => {
   const { user } = req.params;
   fetchSpecificUser(user).then((userData) => {
-    res.status(200).send({ userData: userData });
+    if (userData[0] === undefined) {
+      response
+        .status(404)
+        .send({
+          user: 'This user does not exist. Please check the spelling of the username',
+        });
+    } else {
+      res.status(200).send({ userData: userData });
+    }
   });
 };
 
 exports.getUserList = (req, res, next) => {
   const { user } = req.params;
   fetchSpecificUserList(user).then((userList) => {
+    if (userList[0] === undefined){ res.status(404).send({userList: "This user does not current have any where in their bucket list"})} else {
     res.status(200).send({ userList: userList });
-  });
+}});
 };
 
 exports.addToBucketList = (req, res, next) => {
