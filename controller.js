@@ -1,4 +1,4 @@
-const { response } = require('express');
+const { response } = require("express");
 const {
   newLocations,
   newUsers,
@@ -88,12 +88,10 @@ exports.getSpecificLocation = (req, res, next) => {
   const { locations } = req.params;
   fetchSpecificLocation(locations).then((location) => {
     if (location[0] === undefined) {
-      res
-        .status(404)
-        .send({
-          location:
-            'This location does not exist in our database. Why not add it as a new location and be the first to comment?',
-        });
+      res.status(404).send({
+        location:
+          "This location does not exist in our database. Why not add it as a new location and be the first to comment?",
+      });
     } else {
       res.status(200).send({ location: location });
     }
@@ -103,12 +101,10 @@ exports.getSpecificLocation = (req, res, next) => {
 exports.getUser = (req, res, next) => {
   const { user } = req.params;
   fetchSpecificUser(user).then((userData) => {
-    if (userData[0] === undefined) {
-      response
-        .status(404)
-        .send({
-          user: 'This user does not exist. Please check the spelling of the username',
-        });
+    if (userData === undefined) {
+      response.status(404).send({
+        user: "This user does not exist. Please check the spelling of the username",
+      });
     } else {
       res.status(200).send({ userData: userData });
     }
@@ -118,9 +114,17 @@ exports.getUser = (req, res, next) => {
 exports.getUserList = (req, res, next) => {
   const { user } = req.params;
   fetchSpecificUserList(user).then((userList) => {
-    if (userList[0] === undefined){ res.status(404).send({userList: "This user does not current have any where in their bucket list"})} else {
-    res.status(200).send({ userList: userList });
-}});
+    if (userList[0] === undefined) {
+      res
+        .status(404)
+        .send({
+          userList:
+            "This user does not current have any where in their bucket list",
+        });
+    } else {
+      res.status(200).send({ userList: userList });
+    }
+  });
 };
 
 exports.addToBucketList = (req, res, next) => {
