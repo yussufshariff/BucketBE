@@ -31,7 +31,7 @@ exports.receiveNewLocations = (req, res, next) => {
 
 exports.receiveNewUsers = (req, res, next) => {
   const userDetails = {
-    name: `${req.body.name}`,
+    username: `${req.body.username}`,
     email: `${req.body.email}`,
     password: `${req.body.password}`,
     profile_picture: `${req.body.profilePicture}`,
@@ -115,12 +115,10 @@ exports.getUserList = (req, res, next) => {
   const { user } = req.params;
   fetchSpecificUserList(user).then((userList) => {
     if (userList[0] === undefined) {
-      res
-        .status(404)
-        .send({
-          userList:
-            "This user does not current have any where in their bucket list",
-        });
+      res.status(404).send({
+        userList:
+          "This user does not current have any where in their bucket list",
+      });
     } else {
       res.status(200).send({ userList: userList });
     }
