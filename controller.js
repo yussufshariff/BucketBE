@@ -14,7 +14,7 @@ const {
   deleteSpecificLocationFromList,
   updateCommentVotes,
   updateProfilePicture,
-} = require("./model.js");
+} = require('./model.js');
 
 exports.receiveNewLocations = (req, res, next) => {
   const locationDetails = {
@@ -70,7 +70,14 @@ exports.getComments = (req, res, next) => {
   const { locations } = req.params;
   fetchComments(locations)
     .then((comments) => {
-      res.status(200).send({ comments: comments });
+      if (comments === undefined) {
+        res.status(404).send({
+          comments:
+            'There are currently no comments for this location. Be the first to leave your story!!',
+        });
+      } else {
+        res.status(200).send({ comments: comments });
+      }
     })
     .catch(next);
 };
