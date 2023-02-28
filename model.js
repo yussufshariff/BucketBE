@@ -86,11 +86,11 @@ exports.newUsers = async (input) => {
   const user = new users(input);
   if (
     input.username == 'undefined' ||
-    input.username == undefined ||
+    !input.username ||
     input.email == 'undefined' ||
-    input.email == undefined ||
+    !input.email ||
     input.password == 'undefined' ||
-    input.password == undefined
+    !input.password
   ) {
     return 'Invalid data given';
   }
