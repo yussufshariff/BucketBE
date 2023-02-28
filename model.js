@@ -87,10 +87,13 @@ exports.newUsers = async (input) => {
   if (
     input.username == 'undefined' ||
     !input.username ||
+    input.username == undefined ||
     input.email == 'undefined' ||
     !input.email ||
+    input.email == undefined ||
     input.password == 'undefined' ||
-    !input.password
+    !input.password ||
+    input.password == undefined
   ) {
     return 'Invalid data given';
   }
