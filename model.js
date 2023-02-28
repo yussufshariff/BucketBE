@@ -1,18 +1,19 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const { isNullOrUndefined, isNull } = require('util');
 
-require("dotenv").config();
+require('dotenv').config();
 
 mongoose
   .connect(process.env.MONGODB_MAIN, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    dbName: "Bookit_Bucket",
+    dbName: 'Bookit_Bucket',
   })
   .then(() => {
-    console.log("Connected to MongoDB!");
+    console.log('Connected to MongoDB!');
   })
   .catch((error) => {
-    console.log("Error connecting to MongoDB: " + error);
+    console.log('Error connecting to MongoDB: ' + error);
   });
 
 const locationsSchema = new mongoose.Schema(
@@ -32,7 +33,7 @@ const usersSchema = new mongoose.Schema(
     profile_picture: {
       type: String,
       default:
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
     },
     bucket_list: { type: Array, required: true },
   },
@@ -53,13 +54,13 @@ const commentsSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-const users = mongoose.model("users", usersSchema);
-const locations = mongoose.model("locations", locationsSchema);
-const comments = mongoose.model("comments", commentsSchema);
+const users = mongoose.model('users', usersSchema);
+const locations = mongoose.model('locations', locationsSchema);
+const comments = mongoose.model('comments', commentsSchema);
 
 exports.newLocations = async (input) => {
   const location = new locations(input);
-  if (input.name !== "undefined" && input.coordinates !== "undefined") {
+  if (input.name !== 'undefined' && input.coordinates !== 'undefined') {
     return locations.find().then(async function (locations) {
       let exists = false;
       for (let i = 0; i < locations.length; i++) {
@@ -78,38 +79,41 @@ exports.newLocations = async (input) => {
         });
       }
     });
-  } else return Promise.reject({ status: 400, msg: "invalid body" });
+  } else return Promise.reject({ status: 400, msg: 'invalid body' });
 };
 
 exports.newUsers = async (input) => {
-  console.log(input);
   const user = new users(input);
   if (
-    input.username == "undefined" ||
-    input.email == "undefined" ||
-    input.password == "undefined"
+    input.username == 'undefined' ||
+    input.email == 'undefined' ||
+    input.password == 'undefined'
   ) {
-    return "Invalid data given";
+    return 'Invalid data given';
   }
-  return users.find().then(async function (users) {
-    let exists = false;
-    for (let i = 0; i < users.length; i++) {
-      if (users[i].username === user.username) {
+  let exists = false;
+  let newUser = null;
+  try {
+    await users.find({ username: input.username }).then(async (users) => {
+      if (users.length > 0) {
         exists = true;
       }
-    }
-    if (!exists) {
-      user.profile_picture =
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-      return user.save((error, user) => {
-        if (error) {
-          console.error(error);
-        }
-      });
-    } else {
-      return "User already exists";
-    }
-  });
+      if (exists === false) {
+        user.profile_picture =
+          'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+      }
+    });
+  } catch {}
+  if (exists === false) {
+    try {
+      newUser = await user.save();
+    } catch {}
+  }
+  if (newUser === null) {
+    return 'This user already exists';
+  } else {
+    return newUser;
+  }
 };
 
 exports.newComments = async (input) => {
@@ -151,7 +155,7 @@ exports.fetchSpecificLocation = async (location) => {
   return locations
     .find({ name: `${location}` }, function (err, specficLocation) {
       if (err) {
-        return "Location not found";
+        return 'Location not found';
       } else {
         return specficLocation;
       }
@@ -166,7 +170,7 @@ exports.fetchSpecificUser = async (user) => {
   return await users
     .findOne({ username: user }, function (err, user) {
       if (user === null) {
-        return "User not found";
+        return 'User not found';
       } else {
         return user;
       }
@@ -184,14 +188,14 @@ exports.fetchSpecificUserList = async (user) => {
       if (userList.length > 0) {
         return userList;
       } else {
-        return "There is currently nothing in your bucket list";
+        return 'There is currently nothing in your bucket list';
       }
     } catch (err) {}
   });
 };
 
 exports.addALocationToBucketList = async (user, locationToAdd) => {
-  console.log(locationToAdd, "<--- Location to add");
+  console.log(locationToAdd, '<--- Location to add');
   return await users.findOne({ username: user }).then(function (userFound) {
     const specificUserFound = userFound;
     try {
@@ -216,12 +220,12 @@ exports.addALocationToBucketList = async (user, locationToAdd) => {
                   }
                 );
                 return location;
-              } else return "location is already in the bucket list";
+              } else return 'location is already in the bucket list';
             } catch (err) {
               return err;
             }
           } else {
-            return "location not found, why not create it yourself and be the first to comment?";
+            return 'location not found, why not create it yourself and be the first to comment?';
           }
         });
     } catch (err) {
@@ -234,10 +238,10 @@ exports.deleteSpecificUser = async (user) => {
   return await users
     .deleteOne({ username: user })
     .then(function () {
-      return "User deleted";
+      return 'User deleted';
     })
     .catch(function (error) {
-      return "User not found";
+      return 'User not found';
     });
 };
 
@@ -255,7 +259,7 @@ exports.deleteSpecificLocationFromList = async (user, location) => {
     .findOne({ username: user })
     .then(async function (userFound) {
       if (userFound === null) {
-        return "user not found";
+        return 'user not found';
       } else {
         let newList = [...userFound.bucket_list];
         console.log(newList);
