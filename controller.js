@@ -1,4 +1,5 @@
-const { response } = require("express");
+const { response } = require('express');
+const mongoose = require('mongoose');
 const {
   newLocations,
   newUsers,
@@ -15,7 +16,7 @@ const {
   deleteSpecificLocationFromList,
   updateCommentVotes,
   updateProfilePicture,
-} = require("./model.js");
+} = require('./model.js');
 
 exports.receiveNewLocations = (req, res, next) => {
   const locationDetails = {
@@ -29,7 +30,8 @@ exports.receiveNewLocations = (req, res, next) => {
     .catch(next);
 };
 
-exports.receiveNewUsers = (req, res, next) => {
+exports.receiveNewUsers = async (req, res, next) => {
+  let createdUser = null;
   const userDetails = {
     username: `${req.body.username}`,
     email: `${req.body.email}`,
@@ -37,12 +39,10 @@ exports.receiveNewUsers = (req, res, next) => {
     profile_picture: `${req.body.profilePicture}`,
     bucket_list: [],
   };
-  newUsers(userDetails)
-    .then((newUser) => {
-      console.log(newUser);
-      res.status(201).send({ newUser: newUser });
-    })
-    .catch(next);
+  try {
+    createdUser = await newUsers(userDetails);
+  } catch (err) {}
+  res.status(201).send({ newUser: createdUser });
 };
 
 exports.receiveNewComments = (req, res, next) => {
@@ -76,7 +76,7 @@ exports.getComments = (req, res, next) => {
       if (comments[0] === undefined) {
         res.status(404).send({
           comments:
-            "There are currently no comments for this location. Be the first to leave your story!!",
+            'There are currently no comments for this location. Be the first to leave your story!!',
         });
       } else {
         res.status(200).send({ comments: comments });
@@ -91,7 +91,7 @@ exports.getSpecificLocation = (req, res, next) => {
     if (location[0] === undefined) {
       res.status(404).send({
         location:
-          "This location does not exist in our database. Why not add it as a new location and be the first to comment?",
+          'This location does not exist in our database. Why not add it as a new location and be the first to comment?',
       });
     } else {
       res.status(200).send({ location: location });
@@ -104,7 +104,7 @@ exports.getUser = (req, res, next) => {
   fetchSpecificUser(user).then((userData) => {
     if (userData === undefined) {
       response.status(404).send({
-        user: "This user does not exist. Please check the spelling of the username",
+        user: 'This user does not exist. Please check the spelling of the username',
       });
     } else {
       res.status(200).send({ userData: userData });
@@ -118,7 +118,7 @@ exports.getUserList = (req, res, next) => {
     if (userList[0] === undefined) {
       res.status(404).send({
         userList:
-          "This user does not current have any where in their bucket list",
+          'This user does not current have any where in their bucket list',
       });
     } else {
       res.status(200).send({ userList: userList });
