@@ -69,6 +69,7 @@ exports.getLocations = (req, res, next) => {
 
 exports.getComments = (req, res, next) => {
   const { locations } = req.params;
+  console.log(locations);
   fetchComments(locations)
     .then((comments) => {
       console.log(comments);

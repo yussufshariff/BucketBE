@@ -135,16 +135,14 @@ exports.fetchLocations = () => {
 };
 
 exports.fetchComments = async (location) => {
-  return await locations
-    .findOne({ name: location })
-    .then(function (locationFound) {
-      let locationId = locationFound.id;
-      try {
-        return comments
-          .find({ locationId: locationId }, (error, comments) => {})
-          .clone();
-      } catch (err) {}
-    });
+  return await locations.findOne({ name: location }).then(function () {
+    let locationId = location;
+    try {
+      return comments
+        .find({ locationId: locationId }, (error, comments) => {})
+        .clone();
+    } catch (err) {}
+  });
 };
 
 exports.fetchSpecificLocation = async (location) => {
