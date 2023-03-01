@@ -22,7 +22,7 @@ const {
 exports.receiveNewLocations = (req, res, next) => {
   const locationDetails = {
     name: `${req.body.name}`,
-    coordinates: [`${req.body.coordinates}`],
+    coordinates: [`${req.body.coordinates[0]}`, `${req.body.coordinates[1]}`],
   };
   console.log(req.body.coordinates);
   newLocations(locationDetails)
