@@ -16,13 +16,13 @@ const {
   deleteSpecificLocationFromList,
   updateCommentVotes,
   updateProfilePicture,
-  updateHasVisited
+  updateHasVisited,
 } = require('./model.js');
 
 exports.receiveNewLocations = (req, res, next) => {
   const locationDetails = {
     name: `${req.body.name}`,
-    coordinates: `${req.body.coordinates}`,
+    coordinates: [`${req.body.coordinates}`],
   };
   newLocations(locationDetails)
     .then((newLocations) => {
