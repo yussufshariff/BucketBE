@@ -325,7 +325,7 @@ exports.updateHasVisited = async (user, location) => {
         } else {
           userFound.bucket_list[i].hasVisited = true;
         }
-      }
+      } else return 'This location is not in the bucket list';
     }
     let updatedUser = null;
     try {
