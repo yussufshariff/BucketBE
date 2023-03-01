@@ -36,7 +36,7 @@ const usersSchema = new mongoose.Schema(
       default:
         'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
     },
-    bucket_list: {type: Array, required: true}
+    bucket_list: { type: Array, required: true },
   },
 
   { versionKey: false }
@@ -200,7 +200,6 @@ exports.fetchSpecificUserList = async (user) => {
 };
 
 exports.addALocationToBucketList = async (user, locationToAdd) => {
-  console.log(locationToAdd, '<--- Location to add');
   return await users.findOne({ username: user }).then(function (userFound) {
     const specificUserFound = userFound;
     try {
@@ -306,4 +305,35 @@ exports.updateProfilePicture = async (user, profilepicture) => {
     { username: user },
     { profile_picture: profilepicture }
   );
+};
+
+exports.updateHasVisited = async (user, location) => {
+  const testFunction = async function () {
+    let userFound = null;
+    try {
+      userFound = await users.findOne({ username: user });
+    } catch {}
+
+    return userFound;
+  };
+  testFunction().then(async (userFound) => {
+    for (let i = 0; i < userFound.bucket_list.length; i++) {
+      if (userFound.bucket_list[i].name == location) {
+        console.log(userFound.bucket_list[i].name, '<-- location name');
+        if (userFound.bucket_list[i].hasVisited == true) {
+          userFound.bucket_list[i].hasVisited = false;
+        } else {
+          userFound.bucket_list[i].hasVisited = true;
+        }
+      }
+    }
+    let updatedUser = null;
+    try {
+      updatedUser = await users.findOneAndUpdate(
+        { username: user },
+        { bucket_list: userFound.bucket_list }
+      );
+    } catch {}
+    return updatedUser;
+  });
 };

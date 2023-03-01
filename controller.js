@@ -16,6 +16,7 @@ const {
   deleteSpecificLocationFromList,
   updateCommentVotes,
   updateProfilePicture,
+  updateHasVisited
 } = require('./model.js');
 
 exports.receiveNewLocations = (req, res, next) => {
@@ -178,5 +179,13 @@ exports.getProfilePicture = (req, res) => {
   const { profilepicture } = req.params;
   updateProfilePicture(user, profilepicture).then((updatedProfile) => {
     res.status(201).send(updatedProfile);
+  });
+};
+
+exports.getLocationVisited = (req, res) => {
+  const { user } = req.params;
+  const { location } = req.params;
+  updateHasVisited(user, location).then((visited) => {
+    res.status(201).send(visited);
   });
 };

@@ -22,6 +22,7 @@ const {
   commentVote,
   getProfilePicture,
   getLocations,
+  getLocationVisited
 } = require("./controller");
 
 app.get("/api/locations", getLocations);
@@ -35,6 +36,7 @@ app.post("/api/comments", receiveNewComments);
 app.patch("/api/:user/list", addToBucketList);
 app.patch("/api/:commentId/votes/:user", commentVote);
 app.patch("/api/:user/:profilepicture", getProfilePicture);
+app.patch("/api/:user/:location/visited", getLocationVisited);
 app.delete("/api/users/:user/", deleteUser);
 app.delete("/api/comments/:comment", deleteComment);
 app.delete("/api/locations/:location", deleteLocation);
