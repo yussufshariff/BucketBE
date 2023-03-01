@@ -20,6 +20,7 @@ const locationsSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     coordinates: { type: String, required: true },
+    hasVisited: { type: Boolean, default: false },
   },
 
   { versionKey: false }
@@ -35,7 +36,7 @@ const usersSchema = new mongoose.Schema(
       default:
         'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
     },
-    bucket_list: { type: Array, required: true },
+    bucket_list: {type: Array, required: true}
   },
 
   { versionKey: false }
