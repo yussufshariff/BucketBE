@@ -19,7 +19,7 @@ mongoose
 const locationsSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    coordinates: { type: String, required: true },
+    coordinates: { type: Array, required: true },
     hasVisited: { type: Boolean, default: false },
   },
 
