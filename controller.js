@@ -24,6 +24,7 @@ exports.receiveNewLocations = (req, res, next) => {
     name: `${req.body.name}`,
     coordinates: [`${req.body.coordinates}`],
   };
+  console.log(req.body.coordinates);
   newLocations(locationDetails)
     .then((newLocations) => {
       res.status(201).send(newLocations);
