@@ -318,14 +318,14 @@ exports.updateHasVisited = async (user, location) => {
   };
   testFunction().then(async (userFound) => {
     for (let i = 0; i < userFound.bucket_list.length; i++) {
-      if (userFound.bucket_list[i].name == location) {
-        console.log(userFound.bucket_list[i].name, '<-- location name');
+      console.log(userFound.bucket_list.length);
+      if (userFound.bucket_list[i].name === location) {
         if (userFound.bucket_list[i].hasVisited == true) {
           userFound.bucket_list[i].hasVisited = false;
         } else {
           userFound.bucket_list[i].hasVisited = true;
         }
-      } else return 'This location is not in the bucket list';
+      }
     }
     let updatedUser = null;
     try {
